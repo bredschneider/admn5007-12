@@ -2,7 +2,9 @@
 title: "A/B Testing: Experimental Design"
 author: John Doe
 date: March 22, 2005
-  
+
+output: revealjs::revealjs_presentation
+        
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
   rmarkdown::render(input_file,
