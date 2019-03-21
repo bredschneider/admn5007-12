@@ -1,0 +1,35 @@
+---
+title: "A/B Testing: Experimental Design"
+author: John Doe
+date: March 22, 2005
+output: 
+  revealjs::revealjs_presentation:
+  incremental: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Variables
+
+> - <b>Question</b>: Will making a change to my website result in more [BUTTON NAME] clicks?
+- <b>Hypothesis</b>: Using Photo 2 will result in more [BUTTON NAME] clicks. 
+- <b>Dependent Variable</b>: Clicked the button or not.
+- <b>Independent Variable</b>: Photo
+
+## Evaluate Preliminary Dataset
+
+```{r cars}
+library(tidyverse)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
