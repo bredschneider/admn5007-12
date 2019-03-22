@@ -1,0 +1,27 @@
+.reveal {
+  background: #ecf0f1;
+  border-top: 10px solid #d93a2f;
+}
+
+.reveal h2 {
+  color: #d93a2f;
+  font-weight: bold;
+}
+
+.reveal section p {
+  color: #535353;
+  text-align: left;
+  font-weight: lighter;
+  font-size: 1.5rem;
+}
+
+.reveal section li {
+  line-height: 1.5;
+  color: #535353;
+  font-size: 1.5rem;
+}
+
+.title h2 {
+  text-align: left;
+}
+

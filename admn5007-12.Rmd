@@ -1,10 +1,12 @@
 ---
-title: "A/B Testing: Experimental Design"
-author: John Doe
-date: March 22, 2005
-
+title:
+author: 
+date: 
 output: revealjs::revealjs_presentation
-        
+css: docs/styles.css
+incremental: true
+slideNumber: true
+highlight: pygments
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
   rmarkdown::render(input_file,
@@ -16,25 +18,88 @@ knit: (function(input_file, encoding) {
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## A/B Testing: Experimental Design  {data-background="art.jpg" .title}
+March 26, 2019
+
 ## Variables
 
-> - <b>Question</b>: Will making a change to my website result in more [BUTTON NAME] clicks?
-- <b>Hypothesis</b>: Using Photo 2 will result in more [BUTTON NAME] clicks. 
-- <b>Dependent Variable</b>: Clicked the button or not.
-- <b>Independent Variable</b>: Photo
+> - <b>Question</b>: Will making a colour change to my website result in more button clicks?
+> - <b>Hypothesis</b>: By changing the colour to 'blue' will result in more button clicks. 
+> - <b>Dependent Variable</b>: Clicked the button or not.
+> - <b>Independent Variable</b>: Header colour.
 
 ## Evaluate Preliminary Dataset
 
-```{r cars}
+```{r clicks, message=FALSE, warning=FALSE}
 library(tidyverse)
+
+clicks <- read.csv("click.csv")
+clicks
 ```
 
-## Including Plots
+## Calculate Conversion Rate
+Calculate the conversion rate by using the 'dplyr' function <b>summarize</b> to find the means of the clicks.
+```{r}
+library(dplyr)
+clicks <- read.csv("click.csv")
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+clicks %>%
+  summarize(conversion_rate = mean(clicked_button))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Factors
+We computed the rate over the year, but there could be other factors that affect the number of clicks. We'll compute the conversion rate of clicks by month to see if there is a change month to month. 
+
+```{r message=FALSE, warning=FALSE}
+library(lubridate)
+
+clicks %>%
+  group_by(month(visit_date)) %>%
+  summarize(conversion_rate = mean(clicked_button))
+```
+
+## Plot the Results
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+clicks_sum <- clicks %>%
+  group_by(month(visit_date)) %>%
+  summarize(conversion_rate = mean(clicked_button))
+
+clicks_sum_plot <- ggplot(clicks_sum, aes(x = `month(visit_date)`, y = conversion_rate)) + 
+  geom_point() + 
+  geom_line()
+```
+
+## View Plot
+
+```{r echo==FALSE, fig.height=5}
+plot(clicks_sum_plot)
+```
+
+## Power Analysis
+A/B testing tries to run both conditions simultaneously as opposed to separately so that both are exposed to the same variables. 
+
+A power analysis will tell you how many data points (or sample size) you’ll need to ensure the effect is real.
+
+> - <b>Statistical Test</b>: Test you plan to run
+> - <b>Baseline Value</b>: Value for the current condition
+> - <b>Desired Value</b>: Expected value for the test condition
+> - <b>B</b>: Proportion of the data (ideally 0.5)
+> - <b>Alpha</b>: Level where effect is significant (generally 0.05)
+> - <b>Power</b>: Probability rejecting the null hypothesis (generally 0.8)
+
+## Running a Power Analysis
+```{r message=FALSE, warning=FALSE}
+library(powerMediation)
+
+total_sample_size <- SSizeLogisticBin(p1 = 0.2,
+                                      p2 = 0.3,
+                                      B = 0.5,
+                                      alpha = 0.05,
+                                      power= 0.8)
+
+total_sample_size
+```
+
+## Experiment Results
