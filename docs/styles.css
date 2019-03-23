@@ -15,13 +15,24 @@
   font-size: 1.5rem;
 }
 
+.reveal section ul {
+  display: block;
+}
+
 .reveal section li {
   line-height: 1.5;
   color: #535353;
   font-size: 1.5rem;
+  text-align: left;
+}
+
+.reveal section img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 .title h2 {
   text-align: left;
 }
-
