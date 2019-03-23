@@ -17,6 +17,7 @@
 
 .reveal section ul {
   display: block;
+  margin-left: 1.25rem;
 }
 
 .reveal section li {

@@ -1,49 +1,48 @@
 ---
-title:
-author: 
-date: 
-output: revealjs::revealjs_presentation
-css: docs/styles.css
-incremental: true
-slideNumber: true
-highlight: pygments
-knit: (function(input_file, encoding) {
-  out_dir <- 'docs';
-  rmarkdown::render(input_file,
- encoding=encoding,
- output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+title: "ADMN5007-11 Notes"
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## A/B Testing: Experimental Design  {data-background="art.jpg" .title}
+## A/B Testing: Experimental Design
 March 26, 2019
 
 ## What is A/B Testing?
 A/B testing is a framework for you to test different ideas for how to improve upon an existing design. 
 
-<img src="docs/ab-testing-funnel.png" alt="Funnel of three A/B tests including ads, landing pages and welcome email" style="float:left; display: inline; margin-right: 30px;">
-
-<small>Image Source: [Optimizely: Optimization Glossary](https://www.optimizely.com/optimization-glossary/ab-testing/)</small>
-
 For marketing, this often means testing:
 
-> - Promotional offers
-> - Copy
-> - Form fields
-> - Page layout
-> - Conversion rates
-> - Drop off rates
-> - Time spent on a website
-> - Email subject lines
+- Promotional offers: The amount, type of offer, topics etc.
+- Copy: Positioning, types of words 
+- Form fields: Display more or less 
+- Page layout: Location of items of a page,
+- Conversion rates: Website, placement of CTAs, colours, text
+- Drop off rates: how many pages an individual views before they leave a site
+- Time spent on a website: how long did they spend on a website
+- Email subject lines: what subject line makes people open it
 
 ## A/B Testing Process
 
 ![Image of A/B Testing Process](docs/ab-testing-process-6.png)
 
+A/b testing is not just something you do once, You want to be constantly updating your website/app/email/ad to maximize for:
+- Conversions
+- Usage rates
+You are always making minor updates to push those numbers upwards
+
+To design an effective A/B test, you need:
+* A control option
+* A test option
+
 <small>Image Source: [Optimizely: Optimization Glossary](https://www.optimizely.com/optimization-glossary/ab-testing/)</small>
+
+## Find an Example
+Have students find an eaxmple online of A/B testing in practice. What did the organization test? What were their resutls? Share the answers in Slack.
 
 ## Example
 <small>All examples are fictious.</small>
@@ -53,8 +52,6 @@ Lets say that we are interested in knowing if <b>Build your business</b> perform
 ![Control Version of Shopify website with purple Start Your Free Trial button](docs/control.jpg)
 
 ## Variables
-
-<img src="docs/control.jpg" alt="Control Version of Shopify website with purple Start Your Free Trial button" style="float:left; display: inline; margin-right: 30px;">
 
 > - <b>Question</b>: How long are users staying on our homepage?
 > - <b>Hypothesis</b>: Users stay on the site longer when they see <b>Build your business</b>. 
@@ -71,10 +68,6 @@ An example for when you would use a t-test to evaluate an A/B test would be to m
 
 An example for when you would use logistic regression to evaluate an A/B test, might be for conversions (did the user complete the action or not).
 
-![Control and variation graph](docs/control-variation-graph.png)
-
-<small>Image Source: [Optimizely: Optimization Glossary](https://www.optimizely.com/optimization-glossary/ab-testing/)</small>
-
 ## Running a t-test
 To get the dataset, visit Blackboard and download the 'time.csv' file.
 
@@ -89,21 +82,24 @@ experiment_results <- t.test(time_spent_homepage_sec ~ condition, data = create_
 experiment_results
 ```
 
+When creating our t.test, dependent variable ~ independent variable. 
+In the results, look at the p-value and the means (means are fairly similar) meaning no significant reults.
+
 ## Example - Test Version
 <small>All examples are fictious.</small>
 
 ![Test Version of Shopify website with green Start Your Free Trial button](docs/test.jpg)
 
 ## Variables
-<img src="docs/ab-testing.png" alt="Control version of a website compared to a test version of a website" style="float:left; display: inline; margin-right: 30px;">
-<small>Image Source: [Optimizely: Optimization Glossary](https://www.optimizely.com/optimization-glossary/ab-testing/)</small>
 
+- <b>Question</b>: Will making a colour change to my button result in more button clicks?
+- <b>Hypothesis</b>: By changing the colour to 'green' it will result in more button clicks. 
+- <b>Dependent Variable</b>: Whether or not the user clicked the button.
+- <b>Independent Variable</b>: Button colour.
 
-> - <b>Question</b>: Will making a colour change to my button result in more button clicks?
-> - <b>Hypothesis</b>: By changing the colour to 'green' it will result in more button clicks. 
-> - <b>Dependent Variable</b>: Whether or not the user clicked the button.
-> - <b>Independent Variable</b>: Button colour.
+From these variables we can already see the shape that our experiment is being to take.
 
+Before we start building our experiment, we need to ensure we gather preliminary data. What does our conversion rate look like before the change? We need o do this to establish aseline data. 
 
 ## Evaluate Preliminary Dataset
 
@@ -115,7 +111,7 @@ clicks
 ```
 
 ## Calculate Conversion Rate
-Calculate the conversion rate by using the 'dplyr' function <b>summarize</b> to find the means of the clicks.
+Calculate the conversion rate by using the 'dplyr' function <b>summarize</b> to find the means of the clicks over all time.
 ```{r}
 library(dplyr)
 clicks <- read.csv("click.csv")
@@ -123,6 +119,7 @@ clicks <- read.csv("click.csv")
 clicks %>%
   summarize(conversion_rate = mean(clicked_button))
 ```
+If we look at the results, we see a conversion rate of, on average, 27% or roughly 27/100 visitors convert.
 
 ## Factors
 We computed the rate over the year, but there could be other factors that affect the number of clicks. We'll compute the conversion rate of clicks by month to see if there is a change month to month. 
@@ -193,6 +190,12 @@ plot(experiment_data_plot)
 ```
 
 ## Analyze our Experiment Results
+We decided to analyze our results using logistic regression
+Glm function
+
+Looking at the estimate column for the row, we can see that the test condition had a higher conversion rate. The model estimate is positive.
+
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
@@ -208,10 +211,6 @@ glm(clicked_button ~ condition,
 ## Let's Try It!
 In this example, we want to know if by moving our <b>Like</b> button on a page, if it will result in more clicks on the button.
 
-<img src="docs/control2.jpg" alt="LinkedIn Article original mockup" style="float:left; max-width: 45%;">
-
-<img src="docs/test2.png" alt="LinkedIn Article with Like button moved up above the fold" style="float:right; max-width: 45%;">
-
 ## Answer
 ```{r like, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -224,7 +223,7 @@ like_data_sum <- like_data %>%
   summarize(conversion_rate = mean(clicked_like))
 
 ## Plot Data
-like_plot <- ggplot(like_data_sum, 
+ggplot(like_data_sum, 
        aes(x = visit_date, y = conversion_rate, 
            color = condition, 
            group = condition)) +
@@ -244,6 +243,8 @@ glm(clicked_like ~ condition,
 ## Power Analysis
 A/B testing tries to run both conditions simultaneously as opposed to separately so that both are exposed to the same variables. 
 
+Experiment length is one of the big question in A/B testing. If you stop too soon, you may not see an effect. If you wait too long, you may waste valuable resources on a failed experiment.
+
 A power analysis will tell you how many data points (or sample size) you’ll need to ensure the effect is real.
 
 There are lots of sample size calculators online. For example, [SurveyMonkey](https://www.surveymonkey.com/mp/sample-size-calculator/) has an online calculator that lets you calculate sample size.
@@ -256,6 +257,19 @@ There are lots of sample size calculators online. For example, [SurveyMonkey](ht
 > - <b>Power</b>: Probability of rejecting the null hypothesis (generally 0.8)
 
 ## Running a Power Analysis
+
+Power or 1 -beta: probability of rejecting the null hypothesis and is the basis for estimating sample size
+
+Power is often closely tied to the significance level or alpha, also referred to as the p-value. Alpha is usually 0.05.
+
+Effect size: magnitude of the effect. To compute take the difference between the two groups and divide by the standard deviation of the two groups. 
+
+As power goes up, so does the number of data points needed. 
+
+Run a logistic regression (because of binary data) 
+Choose dataset for variable P1 and have it match the conversion rate (January - 20%)
+
+P2 is normally backed by previous data. Since we only have a year’s worth of data to work with, let’s take an educated guess at the result. 
 
 ```{r message=FALSE, warning=FALSE}
 library(powerMediation)
@@ -330,15 +344,15 @@ For this assignment, you will be working in pairs. You can choose your partner.
 
 In your team, you will form a hypothesis about an email campaign for one of your favorite new or existing products. For example, a hypothesis might be: “An email campaign for a company that sells outdoor gear will convert (i.e., cause a customer to finalize a purchase) more with a subject line with a promotional message plus call to action (e.g., ‘50% Off All Jackets. Buy Now!’) than one with a promotional message alone (e.g., ‘50% Off All Jackets.’).
 
-Using [Mailchimp](https://mailchimp.com/), you will determine what you would like to test (i.e. subject line.) and create your email. Each member of the team will take a different stance (i.e.”Version A will outperform Version B”) on the hypothesis. 
+Using [Mailchimp](https://mailchimp.com/), you will determine what you would like to test (i.e. subject line, call to action etc.) and create your three emails. Each member of the team will take a different stance (i.e.”Version A will outperform Version B”) on the hypothesis. 
 
 ## Assignment 5: Setting up your Campaign
 <b>Due date: Tuesday, April 9, 2019</b>
 
 A couple of items to set up your campaign:
 
-- Your population size is 50 - you must find at least 50 people to receive your email.
-- Aat least 39 people will have had to open the email of your original population.
+- Your population size is 50 - you must find at least 50 people to receive your email and yes you can use your classmates and myself.
+- You must have a sample size of 39 (at least 39 people will have had to open the email) of your original population.
 - In order to be CASL compliant, you must provide an opt-in mechanism to your subscribers (i.e. you can’t subscribe people to your email list - they must elect to join). MailChimp has this function available. 
 
 <b>Helpful hint: Only register for ONE MailChimp Account per team.</b>
@@ -348,6 +362,7 @@ You will be required to submit a report <b>(each)</b> on the performance of your
 Also include all of your data and your work to determine whose results were successful. 
 
 Helpful reading for running an A/B test with MailChimp: [https://mailchimp.com/help/create-an-ab-testing-campaign/](https://mailchimp.com/help/create-an-ab-testing-campaign/)
+
 
 
 
